@@ -2,6 +2,7 @@ import type { Placement } from '@floating-ui/core';
 import {
   autoUpdate,
   useClick,
+  useDismiss,
   useFloating,
   useFocus,
   useHover,
@@ -45,6 +46,7 @@ export interface FloatingProps extends PropsWithChildren<Omit<ComponentProps<'di
   style?: 'dark' | 'light' | 'auto';
   animation?: false | `duration-${number}`;
   arrow?: boolean;
+  dismissOnClick?: boolean;
 }
 
 /**
@@ -59,6 +61,7 @@ export const Floating: FC<FloatingProps> = ({
   placement = 'top',
   style = 'dark',
   trigger = 'hover',
+  dismissOnClick = true,
   ...props
 }) => {
   const theirProps = excludeClassName(props);
@@ -89,6 +92,7 @@ export const Floating: FC<FloatingProps> = ({
     useFocus(context),
     useHover(context, { enabled: trigger === 'hover' }),
     useRole(context, { role: 'tooltip' }),
+    useDismiss(context),
   ]);
 
   useEffect(() => {
@@ -116,6 +120,9 @@ export const Floating: FC<FloatingProps> = ({
             position: strategy,
             top: y ?? ' ',
             left: x ?? ' ',
+          },
+          onClick() {
+            dismissOnClick && setOpen(false);
           },
           ...theirProps,
         })}
